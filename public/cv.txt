@@ -1,0 +1,24 @@
+# Anwar Hilal - Curriculum Vitae
+
+## Contact Information
+- **Email:** anwar.hilal@example.com
+- **Phone:** +33 X XX XX XX XX
+- **Location:** France
+
+## Education
+- **Telecommunications Engineering Student** (Current)
+- **Aerospace Engineering Interest**
+
+## Skills
+- Satellite Communication Systems
+- Network Routing Optimization
+- Signal Processing
+- Python, MATLAB, C Programming
+
+## Projects
+- Satellite Communication Link Simulation
+- Network Routing with Dijkstra's Algorithm
+- Deep Space Communication Protocols
+
+---
+*This is a placeholder CV. Replace with your actual CV content.*

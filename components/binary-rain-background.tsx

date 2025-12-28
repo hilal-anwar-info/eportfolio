@@ -1,0 +1,265 @@
+
+"use client"
+
+import { useEffect, useRef } from "react"
+
+export function BinaryRainBackground() {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+
+    const ctx = canvas.getContext("2d")
+    if (!ctx) return
+
+    // Set canvas size
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth
+      canvas.height = window.innerHeight
+    }
+    resizeCanvas()
+    window.addEventListener("resize", resizeCanvas)
+
+    let t = 0
+    const binaryDrops: any[] = []
+    const particles: any[] = []
+
+    // Initialize binary drops
+    for (let i = 0; i < 50; i++) {
+      binaryDrops.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        char: Math.random() < 0.5 ? '0' : '1',
+        speed: Math.random() * 2 + 1,
+        opacity: Math.random() * 0.8 + 0.2,
+        size: Math.random() * 8 + 12,
+        trail: []
+      })
+    }
+
+    // Initialize particles for glow effects
+    for (let i = 0; < 30; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: (Math.random() - 0.5) * 0.5,
+        radius: Math.random() * 2 + 1,
+        opacity: Math.random() * 0.3 + 0.1
+      })
+    }
+
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      
+      // Create deep space gradient background
+      const gradient = ctx.createRadialGradient(
+        canvas.width * 0.5, canvas.height * 0.3, 0,
+        canvas.width * 0.5, canvas.height * 0.5, Math.max(canvas.width, canvas.height)
+      )
+      gradient.addColorStop(0, "#000011")
+      gradient.addColorStop(0.3, "#000033")
+      gradient.addColorStop(0.7, "#000022")
+      gradient.addColorStop(1, "#000000")
+      ctx.fillStyle = gradient
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+      // Draw satellite
+      drawSatellite(ctx, canvas.width, canvas.height, t)
+      
+      // Draw stars and particles
+      drawStarsAndParticles(ctx, particles, canvas.width, canvas.height, t)
+      
+      // Draw binary rain
+      drawBinaryRain(ctx, binaryDrops, canvas.width, canvas.height, t)
+      
+      // Draw data streams
+      drawDataStreams(ctx, canvas.width, canvas.height, t)
+      
+      t += 0.02
+      requestAnimationFrame(animate)
+    }
+
+    animate()
+
+    return () => {
+      window.removeEventListener("resize", resizeCanvas)
+    }
+  }, [])
+
+  const drawSatellite = (ctx: CanvasRenderingContext2D, width: number, height: number, time: number) => {
+    const satelliteX = width * 0.8
+    const satelliteY = height * 0.25
+    const angle = time * 0.3
+
+    ctx.save()
+    ctx.translate(satelliteX, satelliteY)
+    ctx.rotate(angle * 0.1)
+
+    // Satellite body
+    ctx.fillStyle = "#4A90E2"
+    ctx.shadowColor = "#4A90E2"
+    ctx.shadowBlur = 10
+    ctx.fillRect(-15, -8, 30, 16)
+    
+    // Solar panels
+    ctx.fillStyle = "#1E3A8A"
+    ctx.fillRect(-35, -6, 15, 12)
+    ctx.fillRect(20, -6, 15, 12)
+    
+    // Antenna
+    ctx.strokeStyle = "#FFD700"
+    ctx.lineWidth = 2
+    ctx.beginPath()
+    ctx.moveTo(0, -8)
+    ctx.lineTo(0, -25)
+    ctx.stroke()
+    
+    // Communication signal waves
+    for (let r = 30; r < 100; r += 15) {
+      ctx.strokeStyle = `rgba(0, 255, 255, ${0.2 * (1 - r / 100)})`
+      ctx.lineWidth = 1
+      ctx.beginPath()
+      ctx.arc(0, -25, r + Math.sin(time * 2) * 3, 0, Math.PI * 2)
+      ctx.stroke()
+    }
+    
+    // Orbital path
+    ctx.strokeStyle = "rgba(100, 150, 255, 0.1)"
+    ctx.lineWidth = 1
+    ctx.setLineDash([5, 5])
+    ctx.beginPath()
+    ctx.arc(width * 0.5, height * 0.3, Math.min(width, height) * 0.4, 0, Math.PI * 2)
+    ctx.stroke()
+    ctx.setLineDash([])
+    
+    ctx.restore()
+  }
+
+  const drawStarsAndParticles = (ctx: CanvasRenderingContext2D, particles: any[], width: number, height: number, time: number) => {
+    particles.forEach((particle, index) => {
+      // Update position
+      particle.x += particle.vx
+      particle.y += particle.vy
+      
+      // Wrap around
+      if (particle.x < 0) particle.x = width
+      if (particle.x > width) particle.x = 0
+      if (particle.y < 0) particle.y = height
+      if (particle.y > height) particle.y = 0
+      
+      // Draw particle with glow
+      const pulse = Math.sin(time * 3 + index) * 0.3 + 0.7
+      const alpha = particle.opacity * pulse
+      
+      // Outer glow
+      const gradient = ctx.createRadialGradient(particle.x, particle.y, 0, particle.x, particle.y, particle.radius * 3)
+      gradient.addColorStop(0, `rgba(200, 220, 255, ${alpha * 0.5})`)
+      gradient.addColorStop(1, 'rgba(200, 220, 255, 0)')
+      ctx.fillStyle = gradient
+      ctx.beginPath()
+      ctx.arc(particle.x, particle.y, particle.radius * 3, 0, Math.PI * 2)
+      ctx.fill()
+      
+      // Core
+      ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`
+      ctx.beginPath()
+      ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2)
+      ctx.fill()
+    })
+  }
+
+  const drawBinaryRain = (ctx: CanvasRenderingContext2D, drops: any[], width: number, height: number, time: number) => {
+    drops.forEach((drop, index) => {
+      // Update position
+      drop.y += drop.speed
+      drop.x += Math.sin(time + index * 0.1) * 0.2 // Slight horizontal drift
+      
+      // Add trail effect
+      drop.trail.unshift({ x: drop.x, y: drop.y, opacity: drop.opacity })
+      if (drop.trail.length > 8) {
+        drop.trail.pop()
+      }
+      
+      // Reset when off screen
+      if (drop.y > height + 20) {
+        drop.y = -20
+        drop.x = Math.random() * width
+        drop.char = Math.random() < 0.5 ? '0' : '1'
+        drop.speed = Math.random() * 2 + 1
+        drop.opacity = Math.random() * 0.8 + 0.2
+        drop.size = Math.random() * 8 + 12
+        drop.trail = []
+      }
+      
+      // Draw trail
+      drop.trail.forEach((point: any, trailIndex: number) => {
+        const trailAlpha = point.opacity * (trailIndex / drop.trail.length) * 0.3
+        ctx.fillStyle = `rgba(0, 255, 150, ${trailAlpha})`
+        ctx.font = `${drop.size * (trailIndex / drop.trail.length)}px monospace`
+        ctx.fillText(drop.char, point.x, point.y)
+      })
+      
+      // Draw main drop
+      ctx.fillStyle = `rgba(0, 255, 150, ${drop.opacity})`
+      ctx.shadowColor = "#00ff96"
+      ctx.shadowBlur = 5
+      ctx.font = `${drop.size}px monospace`
+      ctx.fillText(drop.char, drop.x, drop.y)
+      ctx.shadowBlur = 0
+    })
+  }
+
+  const drawDataStreams = (ctx: CanvasRenderingContext2D, width: number, height: number, time: number) => {
+    const streams = [
+      { x: width * 0.3, y: 0, direction: 1 },
+      { x: width * 0.7, y: height, direction: -1 },
+      { x: 0, y: height * 0.6, direction: 1 },
+      { x: width, y: height * 0.4, direction: -1 }
+    ]
+
+    streams.forEach((stream, index) => {
+      for (let i = 0; i < 20; i++) {
+        const progress = ((time * 0.5 + i * 0.1 + index) % 1)
+        const y = stream.direction === 1 
+          ? progress * height 
+          : height - (progress * height)
+        const x = stream.x + Math.sin(time * 2 + i) * 20
+        
+        const opacity = Math.sin(progress * Math.PI) * 0.6
+        ctx.fillStyle = `rgba(100, 200, 255, ${opacity})`
+        ctx.font = '8px monospace'
+        ctx.fillText(Math.random() < 0.5 ? '0' : '1', x, y)
+      }
+      
+      // Draw connection line
+      ctx.strokeStyle = `rgba(100, 200, 255, 0.1)`
+      ctx.lineWidth = 1
+      ctx.setLineDash([3, 3])
+      ctx.beginPath()
+      if (stream.direction === 1) {
+        ctx.moveTo(stream.x, 0)
+        ctx.lineTo(stream.x, height)
+      } else {
+        ctx.moveTo(stream.x, height)
+        ctx.lineTo(stream.x, 0)
+      }
+      ctx.stroke()
+      ctx.setLineDash([])
+    })
+  }
+
+  return (
+    <div className="fixed inset-0 pointer-events-none z-0">
+      <canvas 
+        ref={canvasRef}
+        className="w-full h-full"
+        style={{ 
+          background: 'linear-gradient(135deg, #000011 0%, #000033 50%, #000022 100%)'
+        }}
+      />
+    </div>
+  )
+}
+
