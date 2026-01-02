@@ -6,6 +6,8 @@ import { Orbitron } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { Suspense } from "react"
 import "./globals.css"
+import { Navbar } from "@/components/navbar"
+import { DigitalRain } from "@/components/digital-rain"
 
 const orbitron = Orbitron({
   subsets: ["latin"],
@@ -28,7 +30,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} ${orbitron.variable}`}>
-        <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
+        <DigitalRain />
+        <Suspense fallback={<div>Loading...</div>}>
+          <Navbar />
+          <main className="pt-16">{children}</main>
+        </Suspense>
         <Analytics />
       </body>
     </html>

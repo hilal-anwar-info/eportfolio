@@ -1,0 +1,1 @@
+self.__NEXT_FONT_MANIFEST="{\"pages\":{},\"app\":{\"/Users/anwarhilal/Documents/GitHub/eportfolio2/app/layout\":[\"static/media/9a4ee768fed045da-s.p.woff2\",\"static/media/5b01f339abf2f1a5.p.woff2\",\"static/media/028c0d39d2e8f589-s.p.woff2\"]},\"appUsingSizeAdjust\":true,\"pagesUsingSizeAdjust\":false}"

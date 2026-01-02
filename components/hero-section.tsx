@@ -1,18 +1,14 @@
+
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { ArrowDown, Download } from "lucide-react"
+import { Download } from "lucide-react"
 
 export function HeroSection() {
-  const scrollToProjects = () => {
-    document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" })
-  }
-
-  const handleDownloadCV = () => {
-    // Create a temporary link to download the CV
+  const handleDownload = (filename: string, downloadName: string) => {
     const link = document.createElement('a')
-    link.href = '/cv.pdf' // Path to your CV file
-    link.download = 'CV_Anwar_Hilal.pdf'// Downloaded filename
+    link.href = filename
+    link.download = downloadName
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
@@ -45,23 +41,22 @@ export function HeroSection() {
           <div className="flex flex-col sm:flex-row gap-6 justify-center pt-4">
             <Button
               size="lg"
-              onClick={scrollToProjects}
+              onClick={() => handleDownload('/cv2.pdf', 'CV_ANWAR_HILAL_EN.pdf')}
               className="group relative overflow-hidden bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xl px-10 py-8 glow-border"
             >
               <span className="relative z-10 flex items-center gap-3">
-                Explore My Work
-                <ArrowDown className="w-6 h-6 group-hover:translate-y-1 transition-transform" />
+                <Download className="w-6 h-6 group-hover:translate-y-1 transition-transform" />
+                Download CV (EN)
               </span>
             </Button>
             <Button
               size="lg"
-              variant="outline"
-              onClick={handleDownloadCV}
-              className="group border-2 border-accent text-accent hover:bg-accent hover:text-accent-foreground font-semibold text-xl px-10 py-8 glow-border bg-transparent"
+              onClick={() => handleDownload('/cv.pdf', 'CV_ANWAR_HILAL_FR.pdf')}
+              className="group relative overflow-hidden bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xl px-10 py-8 glow-border"
             >
-              <span className="flex items-center gap-3">
+              <span className="relative z-10 flex items-center gap-3">
                 <Download className="w-6 h-6 group-hover:translate-y-1 transition-transform" />
-                Download CV
+                Download CV (FR)
               </span>
             </Button>
           </div>
@@ -77,3 +72,4 @@ export function HeroSection() {
     </section>
   )
 }
+

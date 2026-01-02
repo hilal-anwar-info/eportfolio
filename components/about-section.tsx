@@ -1,4 +1,4 @@
-import { Radio, Satellite, Waves } from "lucide-react"
+import { Radio, Satellite, Zap } from "lucide-react"
 
 export function AboutSection() {
   return (
@@ -39,9 +39,9 @@ export function AboutSection() {
                 description: "Analyzing and optimizing communication signals for space applications",
               },
               {
-                icon: Waves,
-                title: "RF Engineering",
-                description: "Designing antenna systems and studying wave propagation",
+                icon: Zap,
+                title: "Optical Communication",
+                description: "Exploring fiber optics and light-based communication systems",
               },
             ].map((item, index) => (
               <div
